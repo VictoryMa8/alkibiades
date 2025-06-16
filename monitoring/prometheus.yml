@@ -1,0 +1,23 @@
+# Global settings for Prometheus
+global:
+  # How often to collect metrics from all targets (every 15 seconds)
+  scrape_interval: 15s
+
+# Apps to collect metrics from
+scrape_configs:
+  
+  # First job: monitor alkibiades
+  - job_name: 'django-app'
+    
+    # Specific addresses to check
+    static_configs:
+      # This is where our django app is running
+      - targets: ['host.docker.internal:8000']
+    
+    # URL path to check for metrics
+    # Our app will gibe metrics at http://localhost:8000/metrics
+    metrics_path: '/metrics'
+    
+    # How often to collect metrics from this specific target (every 5 seconds)
+    # This overrides the global setting for this job
+    scrape_interval: 5s

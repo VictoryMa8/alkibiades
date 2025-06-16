@@ -1,0 +1,43 @@
+services:
+  
+  # First container: prometheus (collects metrics)
+  prometheus:
+    image: prom/prometheus:latest
+    
+    container_name: prometheus
+    
+    ports:
+      - "9090:9090"
+    
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    
+    # Commands to run when the container starts
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'  # Use this config file
+      - '--storage.tsdb.path=/prometheus'               # Store data here
+      - '--web.console.libraries=/etc/prometheus/console_libraries'  # Internal Prometheus stuff
+      - '--web.console.templates=/etc/prometheus/consoles'           # Internal Prometheus stuff
+
+  # Second container: Grafana (makes graphs)
+  grafana:
+    image: grafana/grafana:latest
+    
+    container_name: grafana
+
+    ports:
+      - "3000:3000"
+    
+    # Settings to pass to grafana
+    # TODO: change password
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=
+      - GF_USERS_ALLOW_SIGN_UP=false
+    
+    # Create a persistent storage area for Grafana's data
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+# Define storage volumes that persist between container restarts
+volumes:
+  grafana-storage:
